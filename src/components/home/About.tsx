@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import Card from '../ui/Card';
+import { Card } from '../ui/card';
 import { Briefcase, GraduationCap, Award, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

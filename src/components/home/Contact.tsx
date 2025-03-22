@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Send, Mail, MapPin, Phone } from 'lucide-react';
-import Card from '../ui/Card';
+import { Card } from '../ui/card';
 import GlowingButton from '../ui/GlowingButton';
 
 export default function Contact() {
