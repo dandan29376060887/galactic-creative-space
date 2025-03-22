@@ -1,68 +1,10 @@
 
 import { useState } from 'react';
 import { Card } from '../ui/card';
-import { Briefcase, GraduationCap, Award, Star } from 'lucide-react';
+import { User, Mail, MapPin, Calendar, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface TimelineItem {
-  id: number;
-  year: string;
-  title: string;
-  description: string;
-  icon: React.ElementType;
-  category: 'education' | 'experience' | 'achievement';
-}
-
 export default function About() {
-  const [filter, setFilter] = useState<string | null>(null);
-  
-  const timelineItems: TimelineItem[] = [
-    {
-      id: 1,
-      year: '2023',
-      title: 'Senior Developer',
-      description: 'Led the development of a cutting-edge SaaS platform, implementing modern web technologies and best practices.',
-      icon: Briefcase,
-      category: 'experience'
-    },
-    {
-      id: 2,
-      year: '2022',
-      title: 'Master\'s Degree in Computer Science',
-      description: 'Graduated with honors, specializing in web technologies and user experience design.',
-      icon: GraduationCap,
-      category: 'education'
-    },
-    {
-      id: 3,
-      year: '2021',
-      title: 'Frontend Developer',
-      description: 'Designed and built responsive web applications using React and modern CSS techniques.',
-      icon: Briefcase,
-      category: 'experience'
-    },
-    {
-      id: 4,
-      year: '2020',
-      title: 'Developer Hackathon Winner',
-      description: 'First place in the annual developer hackathon for creating an innovative accessibility solution.',
-      icon: Award,
-      category: 'achievement'
-    },
-    {
-      id: 5,
-      year: '2019',
-      title: 'Bachelor\'s Degree in Design',
-      description: 'Graduated with a focus on UI/UX design and web development fundamentals.',
-      icon: GraduationCap,
-      category: 'education'
-    },
-  ];
-  
-  const filteredItems = filter 
-    ? timelineItems.filter(item => item.category === filter)
-    : timelineItems;
-  
   return (
     <section id="about" className="py-24 px-6 relative">
       <div className="max-w-7xl mx-auto">
@@ -72,91 +14,106 @@ export default function About() {
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">My Cosmic Journey</h2>
           <p className="text-white/70 max-w-2xl mx-auto">
-            Explore the timeline of my professional journey through the digital universe.
-            From education to work experience and achievements.
+            Get to know the person behind the code - my story, skills, and what drives me.
           </p>
         </div>
         
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
-          <button 
-            className={cn(
-              "px-4 py-2 rounded-full transition-all",
-              filter === null 
-                ? "bg-cosmic-nebula-blue text-white" 
-                : "bg-white/10 text-white/70 hover:bg-white/20"
-            )}
-            onClick={() => setFilter(null)}
-          >
-            All
-          </button>
-          <button 
-            className={cn(
-              "px-4 py-2 rounded-full transition-all",
-              filter === 'education' 
-                ? "bg-cosmic-nebula-blue text-white" 
-                : "bg-white/10 text-white/70 hover:bg-white/20"
-            )}
-            onClick={() => setFilter('education')}
-          >
-            Education
-          </button>
-          <button 
-            className={cn(
-              "px-4 py-2 rounded-full transition-all",
-              filter === 'experience' 
-                ? "bg-cosmic-nebula-blue text-white" 
-                : "bg-white/10 text-white/70 hover:bg-white/20"
-            )}
-            onClick={() => setFilter('experience')}
-          >
-            Experience
-          </button>
-          <button 
-            className={cn(
-              "px-4 py-2 rounded-full transition-all",
-              filter === 'achievement' 
-                ? "bg-cosmic-nebula-blue text-white" 
-                : "bg-white/10 text-white/70 hover:bg-white/20"
-            )}
-            onClick={() => setFilter('achievement')}
-          >
-            Achievements
-          </button>
-        </div>
-        
-        <div className="relative">
-          {/* Timeline line */}
-          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-white/10 transform md:translate-x-px"></div>
-          
-          <div className="space-y-12">
-            {filteredItems.map((item, index) => (
-              <div 
-                key={item.id}
-                className={cn(
-                  "relative flex flex-col md:flex-row md:items-center",
-                  index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-                )}
-              >
-                {/* Timeline dot */}
-                <div className="absolute left-4 md:left-1/2 w-8 h-8 rounded-full cosmic-gradient flex items-center justify-center transform -translate-x-1/2 z-10">
-                  <item.icon size={16} className="text-white" />
-                </div>
-                
-                {/* Content */}
-                <div className={cn(
-                  "md:w-1/2 ml-12 md:ml-0",
-                  index % 2 === 0 ? "md:pr-12" : "md:pl-12"
-                )}>
-                  <Card className="h-full p-6 bg-white/5 backdrop-blur-md border border-white/10 shadow-lg">
-                    <span className="inline-block px-3 py-1 rounded-full bg-white/10 text-sm text-white/80 mb-2">
-                      {item.year}
-                    </span>
-                    <h3 className="text-xl font-semibold text-white mb-2">{item.title}</h3>
-                    <p className="text-white/70">{item.description}</p>
-                  </Card>
+        <div className="grid md:grid-cols-2 gap-10 items-center">
+          {/* Profile Photo */}
+          <div className="order-2 md:order-1 flex justify-center">
+            <div className="relative w-64 h-64 md:w-80 md:h-80">
+              {/* Animated border */}
+              <div className="absolute inset-0 rounded-full cosmic-gradient animate-pulse-slow"></div>
+              {/* Photo container */}
+              <div className="absolute inset-1 rounded-full overflow-hidden border-4 border-cosmic-background">
+                <div className="w-full h-full bg-cosmic-nebula-blue/20 flex items-center justify-center">
+                  <User size={80} className="text-white/50" />
+                  {/* Replace the User icon with your photo */}
+                  {/* <img 
+                    src="/path-to-your-photo.jpg" 
+                    alt="Your Name" 
+                    className="w-full h-full object-cover"
+                  /> */}
                 </div>
               </div>
-            ))}
+              
+              {/* Floating stars */}
+              <div className="absolute -top-4 -right-2 w-6 h-6 cosmic-gradient rounded-full opacity-60 animate-pulse"></div>
+              <div className="absolute bottom-5 -left-3 w-4 h-4 cosmic-gradient rounded-full opacity-60 animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+              <div className="absolute top-1/2 -right-4 w-3 h-3 cosmic-gradient rounded-full opacity-60 animate-pulse" style={{ animationDelay: '1s' }}></div>
+            </div>
+          </div>
+          
+          {/* About Info */}
+          <div className="order-1 md:order-2">
+            <Card className="bg-white/5 backdrop-blur-md border border-white/10 shadow-lg p-8">
+              <h3 className="text-2xl font-bold text-white mb-6">Cosmic Developer</h3>
+              
+              <div className="space-y-4 text-white/80">
+                <p className="leading-relaxed">
+                  I'm a passionate web developer with expertise in modern frontend technologies. 
+                  With a strong foundation in React, TypeScript and UI/UX design, I create 
+                  engaging digital experiences that combine aesthetics with functionality.
+                </p>
+                
+                <p className="leading-relaxed">
+                  My journey in tech started with a curiosity about how things work, which evolved into 
+                  a career building applications that help businesses succeed in the digital universe.
+                </p>
+                
+                <div className="pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full cosmic-gradient flex items-center justify-center">
+                      <User size={16} className="text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-white/60">Name</p>
+                      <p>John Doe</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full cosmic-gradient flex items-center justify-center">
+                      <Mail size={16} className="text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-white/60">Email</p>
+                      <p>john@example.com</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full cosmic-gradient flex items-center justify-center">
+                      <MapPin size={16} className="text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-white/60">Location</p>
+                      <p>San Francisco, CA</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full cosmic-gradient flex items-center justify-center">
+                      <Calendar size={16} className="text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-white/60">Experience</p>
+                      <p>5+ Years</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="pt-4">
+                  <a 
+                    href="/resume.pdf" 
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmic-nebula-blue/20 hover:bg-cosmic-nebula-blue/30 transition-colors text-cosmic-nebula-blue"
+                  >
+                    <span>View Resume</span>
+                    <ExternalLink size={16} />
+                  </a>
+                </div>
+              </div>
+            </Card>
           </div>
         </div>
       </div>

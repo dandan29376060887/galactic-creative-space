@@ -40,7 +40,7 @@ export default function Header() {
           <span className="text-xl font-semibold text-gradient">Cosmic Portfolio</span>
         </div>
         
-        {/* Social Icons - Always visible */}
+        {/* Social Icons for both mobile and desktop */}
         <div className="flex items-center space-x-3">
           {socialLinks.map((social, index) => (
             <a 
@@ -67,47 +67,30 @@ export default function Header() {
             )}
           </button>
         </div>
-        
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8 absolute left-1/2 transform -translate-x-1/2">
-          <a href="#about" className="text-white opacity-80 hover:opacity-100 transition-opacity">About</a>
-          <a href="#experience" className="text-white opacity-80 hover:opacity-100 transition-opacity">Experience</a>
-          <a href="#projects" className="text-white opacity-80 hover:opacity-100 transition-opacity">Projects</a>
-          <a href="#skills" className="text-white opacity-80 hover:opacity-100 transition-opacity">Skills</a>
-          <a href="#contact" className="text-white opacity-80 hover:opacity-100 transition-opacity">Contact</a>
-        </nav>
       </div>
       
-      {/* Mobile Navigation */}
+      {/* Mobile Menu - Just with social links */}
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 bg-cosmic-background bg-opacity-95 backdrop-blur-md z-40 pt-20">
-          <nav className="flex flex-col items-center space-y-8 p-6">
-            <a href="#about" 
-              className="text-xl text-white"
-              onClick={() => setIsMobileMenuOpen(false)}>
-              About
-            </a>
-            <a href="#experience" 
-              className="text-xl text-white"
-              onClick={() => setIsMobileMenuOpen(false)}>
-              Experience
-            </a>
-            <a href="#projects" 
-              className="text-xl text-white"
-              onClick={() => setIsMobileMenuOpen(false)}>
-              Projects
-            </a>
-            <a href="#skills" 
-              className="text-xl text-white"
-              onClick={() => setIsMobileMenuOpen(false)}>
-              Skills
-            </a>
-            <a href="#contact" 
-              className="text-xl text-white"
-              onClick={() => setIsMobileMenuOpen(false)}>
-              Contact
-            </a>
-          </nav>
+          <div className="flex flex-col items-center space-y-8 p-6">
+            <p className="text-white/80 mb-4">Connect with me</p>
+            <div className="flex flex-wrap justify-center gap-6">
+              {socialLinks.map((social, index) => (
+                <a 
+                  key={index}
+                  href={social.href} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  aria-label={social.label}
+                  className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <social.icon size={24} className="text-white" />
+                  <span className="sr-only">{social.label}</span>
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
       )}
     </header>
