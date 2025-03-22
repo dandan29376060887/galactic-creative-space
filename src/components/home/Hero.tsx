@@ -5,11 +5,15 @@ import { ChevronDown } from 'lucide-react';
 
 export default function Hero() {
   const [displayText, setDisplayText] = useState("");
+  const [nameText, setNameText] = useState("");
   const fullText = "Welcome to my cosmic realm";
+  const fullName = "John Doe";
   const typingSpeed = 100;
+  const nameTypingSpeed = 150;
   const textRef = useRef<HTMLHeadingElement>(null);
   
   useEffect(() => {
+    // Type the welcome text
     let currentIndex = 0;
     const typingInterval = setInterval(() => {
       if (currentIndex < fullText.length) {
@@ -17,6 +21,19 @@ export default function Hero() {
         currentIndex++;
       } else {
         clearInterval(typingInterval);
+        
+        // Start typing name after a delay
+        setTimeout(() => {
+          let nameIndex = 0;
+          const nameTypingInterval = setInterval(() => {
+            if (nameIndex < fullName.length) {
+              setNameText(fullName.substring(0, nameIndex + 1));
+              nameIndex++;
+            } else {
+              clearInterval(nameTypingInterval);
+            }
+          }, nameTypingSpeed);
+        }, 500);
       }
     }, typingSpeed);
     
@@ -44,9 +61,13 @@ export default function Hero() {
             <span className="px-3 py-1 rounded-full bg-white/10 text-sm text-white/80 mb-6 inline-block">
               Cosmic Explorer & Developer
             </span>
+            <h2 className="text-2xl md:text-3xl text-cosmic-nebula-pink mb-4">
+              <span className="text-gradient">{nameText}</span>
+              {nameText.length < fullName.length && <span className="animate-pulse">|</span>}
+            </h2>
             <h1 ref={textRef} className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2">
               {displayText}
-              <span className="animate-pulse">|</span>
+              {displayText.length < fullText.length && <span className="animate-pulse">|</span>}
             </h1>
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-gradient mt-2">
               Building digital experiences
@@ -98,6 +119,21 @@ export default function Hero() {
       <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
         <ChevronDown className="text-white/50" size={32} />
       </div>
+      
+      {/* Floating stars */}
+      {[...Array(30)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute w-1 h-1 rounded-full bg-white"
+          style={{
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            opacity: Math.random() * 0.5 + 0.1,
+            animation: `twinkle ${Math.random() * 3 + 2}s ease-in-out infinite alternate`,
+            animationDelay: `${Math.random() * 5}s`
+          }}
+        />
+      ))}
     </section>
   );
 }

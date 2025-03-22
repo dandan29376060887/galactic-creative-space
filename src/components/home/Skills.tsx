@@ -1,6 +1,7 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { Code, Server, Image, Shield } from 'lucide-react';
 
 interface Skill {
   id: number;
@@ -12,6 +13,27 @@ interface Skill {
 
 export default function Skills() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      const section = document.getElementById('skills');
+      if (!section) return;
+      
+      const rect = section.getBoundingClientRect();
+      const isInView = rect.top < window.innerHeight * 0.75;
+      
+      if (isInView) {
+        setIsVisible(true);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    // Check initially in case section is already in view
+    handleScroll();
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   
   const skills: Skill[] = [
     { id: 1, name: 'React', level: 95, category: 'frontend', color: '#61DAFB' },
@@ -33,10 +55,10 @@ export default function Skills() {
     : skills;
   
   const categories = [
-    { id: 'frontend', name: 'Frontend' },
-    { id: 'backend', name: 'Backend' },
-    { id: 'design', name: 'Design' },
-    { id: 'other', name: 'Other' },
+    { id: 'frontend', name: 'Frontend', icon: Code },
+    { id: 'backend', name: 'Backend', icon: Server },
+    { id: 'design', name: 'Design', icon: Image },
+    { id: 'other', name: 'Other', icon: Shield },
   ];
   
   return (
@@ -59,7 +81,7 @@ export default function Skills() {
         <div className="flex flex-wrap justify-center gap-4 mb-12">
           <button 
             className={cn(
-              "px-4 py-2 rounded-full transition-all",
+              "px-4 py-2 rounded-full transition-all flex items-center gap-2",
               activeCategory === null 
                 ? "bg-cosmic-nebula-blue text-white" 
                 : "bg-white/10 text-white/70 hover:bg-white/20"
@@ -73,20 +95,24 @@ export default function Skills() {
             <button 
               key={category.id}
               className={cn(
-                "px-4 py-2 rounded-full transition-all",
+                "px-4 py-2 rounded-full transition-all flex items-center gap-2",
                 activeCategory === category.id 
                   ? "bg-cosmic-nebula-blue text-white" 
                   : "bg-white/10 text-white/70 hover:bg-white/20"
               )}
               onClick={() => setActiveCategory(category.id)}
             >
+              <category.icon size={16} />
               {category.name}
             </button>
           ))}
         </div>
         
         {/* Desktop view - Orbit visualization */}
-        <div className="hidden lg:block relative w-full h-[500px]">
+        <div className={cn(
+          "hidden lg:block relative w-full h-[500px] transition-all duration-1000",
+          isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
+        )}>
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full cosmic-gradient flex items-center justify-center z-10">
             <span className="text-white font-semibold">Skills</span>
           </div>
@@ -115,8 +141,11 @@ export default function Skills() {
                   <p className="text-white font-medium whitespace-nowrap">{skill.name}</p>
                   <div className="mt-1 w-full bg-white/20 rounded-full h-1">
                     <div 
-                      className="h-1 rounded-full" 
-                      style={{ width: `${skill.level}%`, backgroundColor: skill.color }}
+                      className="h-1 rounded-full transition-all duration-1000" 
+                      style={{ 
+                        width: isVisible ? `${skill.level}%` : '0%', 
+                        backgroundColor: skill.color 
+                      }}
                     ></div>
                   </div>
                 </div>
@@ -127,8 +156,16 @@ export default function Skills() {
         
         {/* Mobile view - Skill bars */}
         <div className="lg:hidden space-y-6">
-          {filteredSkills.map((skill) => (
-            <div key={skill.id} className="glass-card p-4">
+          {filteredSkills.map((skill, index) => (
+            <div 
+              key={skill.id} 
+              className="glass-card p-4"
+              style={{
+                animation: 'fade-in 0.5s ease-out forwards',
+                animationDelay: `${index * 0.1}s`,
+                opacity: 0
+              }}
+            >
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-white font-medium">{skill.name}</h3>
                 <span className="text-white/70">{skill.level}%</span>
@@ -136,13 +173,31 @@ export default function Skills() {
               <div className="w-full bg-white/10 rounded-full h-2.5">
                 <div 
                   className="h-2.5 rounded-full transition-all duration-1000" 
-                  style={{ width: `${skill.level}%`, backgroundColor: skill.color }}
+                  style={{ 
+                    width: isVisible ? `${skill.level}%` : '0%', 
+                    backgroundColor: skill.color 
+                  }}
                 ></div>
               </div>
             </div>
           ))}
         </div>
       </div>
+      
+      {/* Floating stars */}
+      {[...Array(20)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute w-1 h-1 rounded-full bg-white"
+          style={{
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            opacity: Math.random() * 0.5 + 0.1,
+            animation: `twinkle ${Math.random() * 3 + 2}s ease-in-out infinite alternate`,
+            animationDelay: `${Math.random() * 5}s`
+          }}
+        />
+      ))}
     </section>
   );
 }

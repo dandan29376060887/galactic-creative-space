@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Card } from '../ui/card';
-import { Briefcase, Star } from 'lucide-react';
+import { Briefcase, Star, Trophy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ExperienceItem {
@@ -11,6 +11,12 @@ interface ExperienceItem {
   title: string;
   description: string;
   skills: string[];
+}
+
+interface Achievement {
+  id: number;
+  title: string;
+  description: string;
 }
 
 export default function Experience() {
@@ -64,6 +70,24 @@ export default function Experience() {
       title: 'Junior Developer',
       description: 'Developed and maintained responsive websites and implemented UI components for various clients.',
       skills: ['HTML', 'CSS', 'JavaScript', 'jQuery']
+    }
+  ];
+
+  const achievements: Achievement[] = [
+    {
+      id: 1,
+      title: 'Best Developer Award 2023',
+      description: 'Recognized for exceptional contribution to product development and team leadership.'
+    },
+    {
+      id: 2,
+      title: 'Speaker at ReactConf 2022',
+      description: 'Presented advanced React patterns and performance optimization techniques.'
+    },
+    {
+      id: 3,
+      title: 'Open Source Contributor',
+      description: 'Active contributor to several popular open-source projects with over 50 merged PRs.'
     }
   ];
   
@@ -160,10 +184,37 @@ export default function Experience() {
             ))}
           </div>
         </div>
+
+        {/* Achievements Section */}
+        <div className="mt-20">
+          <div className="text-center mb-12">
+            <span className="px-3 py-1 rounded-full bg-white/10 text-sm text-white/80 mb-4 inline-block">
+              Recognition
+            </span>
+            <h2 className="text-3xl font-bold text-white mb-4">Achievements</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {achievements.map((achievement) => (
+              <Card 
+                key={achievement.id} 
+                className="p-6 bg-white/5 backdrop-blur-md border border-white/10 shadow-lg transform transition-all duration-500 hover:translate-y-[-8px] hover:shadow-glow"
+              >
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 rounded-full cosmic-gradient flex items-center justify-center mr-4">
+                    <Trophy size={24} className="text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white">{achievement.title}</h3>
+                </div>
+                <p className="text-white/70">{achievement.description}</p>
+              </Card>
+            ))}
+          </div>
+        </div>
       </div>
       
       {/* Add floating stars in background */}
-      {[...Array(15)].map((_, i) => (
+      {[...Array(25)].map((_, i) => (
         <div
           key={i}
           className="absolute w-1 h-1 rounded-full bg-white"

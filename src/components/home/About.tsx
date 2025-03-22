@@ -1,12 +1,39 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '../ui/card';
-import { User, Mail, MapPin, Calendar, ExternalLink } from 'lucide-react';
+import { User, Mail, MapPin, Calendar, ExternalLink, Award, BookOpen, Briefcase, Coffee } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function About() {
+  const [isVisible, setIsVisible] = useState(false);
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      const section = document.getElementById('about');
+      if (!section) return;
+      
+      const rect = section.getBoundingClientRect();
+      const isInView = rect.top < window.innerHeight * 0.75;
+      
+      if (isInView) {
+        setIsVisible(true);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    // Check initially in case section is already in view
+    handleScroll();
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+  
   return (
     <section id="about" className="py-24 px-6 relative">
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-cosmic-nebula-pink/10 blur-3xl animate-float"></div>
+        <div className="absolute bottom-1/4 right-1/3 w-80 h-80 rounded-full bg-cosmic-nebula-blue/10 blur-3xl animate-float" style={{ animationDelay: "1.5s" }}></div>
+      </div>
+      
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <span className="px-3 py-1 rounded-full bg-white/10 text-sm text-white/80 mb-4 inline-block">
@@ -19,8 +46,11 @@ export default function About() {
         </div>
         
         <div className="grid md:grid-cols-2 gap-10 items-center">
-          {/* Profile Photo */}
-          <div className="order-2 md:order-1 flex justify-center">
+          {/* Profile Photo with animation */}
+          <div className={cn(
+            "order-2 md:order-1 flex justify-center transition-all duration-1000 transform",
+            isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-12"
+          )}>
             <div className="relative w-64 h-64 md:w-80 md:h-80">
               {/* Animated border */}
               <div className="absolute inset-0 rounded-full cosmic-gradient animate-pulse-slow"></div>
@@ -44,10 +74,16 @@ export default function About() {
             </div>
           </div>
           
-          {/* About Info */}
-          <div className="order-1 md:order-2">
-            <Card className="bg-white/5 backdrop-blur-md border border-white/10 shadow-lg p-8">
-              <h3 className="text-2xl font-bold text-white mb-6">Cosmic Developer</h3>
+          {/* About Info with animation */}
+          <div className={cn(
+            "order-1 md:order-2 transition-all duration-1000 transform",
+            isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-12"
+          )}>
+            <Card className="glass-card p-8">
+              <h3 className="text-2xl font-bold text-white mb-6">John Doe</h3>
+              <h4 className="text-xl font-medium text-cosmic-nebula-pink mb-6 typing-text">
+                Cosmic Developer & Designer
+              </h4>
               
               <div className="space-y-4 text-white/80">
                 <p className="leading-relaxed">
@@ -94,12 +130,27 @@ export default function About() {
                   
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full cosmic-gradient flex items-center justify-center">
-                      <Calendar size={16} className="text-white" />
+                      <Briefcase size={16} className="text-white" />
                     </div>
                     <div>
                       <p className="text-sm text-white/60">Experience</p>
                       <p>5+ Years</p>
                     </div>
+                  </div>
+                </div>
+                
+                <div className="pt-4 flex flex-wrap gap-3">
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10">
+                    <Coffee size={16} className="text-cosmic-nebula-pink" />
+                    <span>Coffee Enthusiast</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10">
+                    <BookOpen size={16} className="text-cosmic-nebula-blue" />
+                    <span>Lifelong Learner</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10">
+                    <Award size={16} className="text-cosmic-planet-teal" />
+                    <span>Problem Solver</span>
                   </div>
                 </div>
                 
@@ -117,6 +168,21 @@ export default function About() {
           </div>
         </div>
       </div>
+      
+      {/* Floating stars */}
+      {[...Array(15)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute w-1 h-1 rounded-full bg-white"
+          style={{
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            opacity: Math.random() * 0.5 + 0.1,
+            animation: `twinkle ${Math.random() * 3 + 2}s ease-in-out infinite alternate`,
+            animationDelay: `${Math.random() * 5}s`
+          }}
+        />
+      ))}
     </section>
   );
 }
