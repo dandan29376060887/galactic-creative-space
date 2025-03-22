@@ -1,16 +1,61 @@
 
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import Sidebar from '../components/layout/Sidebar';
-import Hero from '../components/home/Hero';
-import About from '../components/home/About';
-import Projects from '../components/home/Projects';
-import Skills from '../components/home/Skills';
-import Contact from '../components/home/Contact';
 import StarBackground from '../components/ui/StarBackground';
 
+// Lazy-loaded components with suspense
+const Hero = lazy(() => import('../components/home/Hero'));
+const About = lazy(() => import('../components/home/About'));
+const Experience = lazy(() => import('../components/home/Experience'));
+const Projects = lazy(() => import('../components/home/Projects'));
+const Skills = lazy(() => import('../components/home/Skills'));
+const Contact = lazy(() => import('../components/home/Contact'));
+
+// Loading placeholder for lazy-loaded components
+const SectionLoader = () => (
+  <div className="w-full h-screen flex items-center justify-center">
+    <div className="w-16 h-16 rounded-full cosmic-gradient animate-pulse-glow flex items-center justify-center">
+      <div className="w-12 h-12 rounded-full bg-cosmic-background flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full cosmic-gradient animate-spin-slow"></div>
+      </div>
+    </div>
+  </div>
+);
+
 const Index = () => {
+  // Add intersection observer for animations
+  useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1
+    };
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-fade-in');
+          entry.target.classList.remove('opacity-0', 'translate-y-10');
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    
+    // Select all sections to animate
+    const sections = document.querySelectorAll('section');
+    sections.forEach(section => {
+      section.classList.add('opacity-0', 'translate-y-10', 'transition-all', 'duration-700');
+      observer.observe(section);
+    });
+
+    return () => {
+      sections.forEach(section => observer.unobserve(section));
+    };
+  }, []);
+
   // Smooth scroll to section when clicking on navigation links
   useEffect(() => {
     const handleAnchorClick = (e: MouseEvent) => {
@@ -49,11 +94,29 @@ const Index = () => {
       <Sidebar />
       
       <main>
-        <Hero />
-        <About />
-        <Projects />
-        <Skills />
-        <Contact />
+        <Suspense fallback={<SectionLoader />}>
+          <Hero />
+        </Suspense>
+        
+        <Suspense fallback={<SectionLoader />}>
+          <About />
+        </Suspense>
+        
+        <Suspense fallback={<SectionLoader />}>
+          <Experience />
+        </Suspense>
+        
+        <Suspense fallback={<SectionLoader />}>
+          <Projects />
+        </Suspense>
+        
+        <Suspense fallback={<SectionLoader />}>
+          <Skills />
+        </Suspense>
+        
+        <Suspense fallback={<SectionLoader />}>
+          <Contact />
+        </Suspense>
       </main>
       
       <Footer />

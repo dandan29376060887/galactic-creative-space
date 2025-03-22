@@ -147,7 +147,7 @@ export default function About() {
                   "md:w-1/2 ml-12 md:ml-0",
                   index % 2 === 0 ? "md:pr-12" : "md:pl-12"
                 )}>
-                  <Card className="h-full">
+                  <Card className="h-full p-6 bg-white/5 backdrop-blur-md border border-white/10 shadow-lg">
                     <span className="inline-block px-3 py-1 rounded-full bg-white/10 text-sm text-white/80 mb-2">
                       {item.year}
                     </span>

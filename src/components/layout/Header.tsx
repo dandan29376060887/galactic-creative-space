@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Github, Linkedin, Menu, X } from 'lucide-react';
+import { Github, Linkedin, Twitter, Instagram, Menu, X, Mail } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function Header() {
@@ -15,6 +15,14 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const socialLinks = [
+    { icon: Github, href: "https://github.com", label: "GitHub" },
+    { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
+    { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
+    { icon: Instagram, href: "https://instagram.com", label: "Instagram" },
+    { icon: Mail, href: "mailto:contact@example.com", label: "Email" }
+  ];
   
   return (
     <header className={cn(
@@ -32,36 +40,42 @@ export default function Header() {
           <span className="text-xl font-semibold text-gradient">Cosmic Portfolio</span>
         </div>
         
+        {/* Social Icons - Always visible */}
+        <div className="flex items-center space-x-3">
+          {socialLinks.map((social, index) => (
+            <a 
+              key={index}
+              href={social.href} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              aria-label={social.label}
+              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors hover:scale-110 duration-200"
+            >
+              <social.icon size={18} className="text-white" />
+            </a>
+          ))}
+          
+          {/* Mobile Menu Button */}
+          <button 
+            className="md:hidden ml-3 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? (
+              <X size={20} className="text-white" />
+            ) : (
+              <Menu size={20} className="text-white" />
+            )}
+          </button>
+        </div>
+        
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
+        <nav className="hidden md:flex items-center space-x-8 absolute left-1/2 transform -translate-x-1/2">
           <a href="#about" className="text-white opacity-80 hover:opacity-100 transition-opacity">About</a>
+          <a href="#experience" className="text-white opacity-80 hover:opacity-100 transition-opacity">Experience</a>
           <a href="#projects" className="text-white opacity-80 hover:opacity-100 transition-opacity">Projects</a>
           <a href="#skills" className="text-white opacity-80 hover:opacity-100 transition-opacity">Skills</a>
           <a href="#contact" className="text-white opacity-80 hover:opacity-100 transition-opacity">Contact</a>
-          
-          <div className="flex items-center space-x-4 ml-4">
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" 
-               className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-              <Github size={18} className="text-white" />
-            </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" 
-               className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-              <Linkedin size={18} className="text-white" />
-            </a>
-          </div>
         </nav>
-        
-        {/* Mobile Menu Button */}
-        <button 
-          className="md:hidden w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? (
-            <X size={20} className="text-white" />
-          ) : (
-            <Menu size={20} className="text-white" />
-          )}
-        </button>
       </div>
       
       {/* Mobile Navigation */}
@@ -69,36 +83,30 @@ export default function Header() {
         <div className="md:hidden fixed inset-0 bg-cosmic-background bg-opacity-95 backdrop-blur-md z-40 pt-20">
           <nav className="flex flex-col items-center space-y-8 p-6">
             <a href="#about" 
-               className="text-xl text-white"
-               onClick={() => setIsMobileMenuOpen(false)}>
+              className="text-xl text-white"
+              onClick={() => setIsMobileMenuOpen(false)}>
               About
             </a>
+            <a href="#experience" 
+              className="text-xl text-white"
+              onClick={() => setIsMobileMenuOpen(false)}>
+              Experience
+            </a>
             <a href="#projects" 
-               className="text-xl text-white"
-               onClick={() => setIsMobileMenuOpen(false)}>
+              className="text-xl text-white"
+              onClick={() => setIsMobileMenuOpen(false)}>
               Projects
             </a>
             <a href="#skills" 
-               className="text-xl text-white"
-               onClick={() => setIsMobileMenuOpen(false)}>
+              className="text-xl text-white"
+              onClick={() => setIsMobileMenuOpen(false)}>
               Skills
             </a>
             <a href="#contact" 
-               className="text-xl text-white"
-               onClick={() => setIsMobileMenuOpen(false)}>
+              className="text-xl text-white"
+              onClick={() => setIsMobileMenuOpen(false)}>
               Contact
             </a>
-            
-            <div className="flex items-center space-x-6 mt-6">
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer" 
-                 className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
-                <Github size={24} className="text-white" />
-              </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" 
-                 className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
-                <Linkedin size={24} className="text-white" />
-              </a>
-            </div>
           </nav>
         </div>
       )}
