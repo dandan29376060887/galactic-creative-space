@@ -114,16 +114,6 @@
   .scale-in {
     animation: scaleIn 0.5s ease-out forwards;
   }
-  
-  .lazy-animate {
-    @apply opacity-0 scale-95 transition-all duration-500;
-    transition-property: opacity, transform;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  .lazy-animate.animate-fade-in {
-    @apply opacity-100 scale-100;
-  }
 }
 
 .star {
@@ -247,27 +237,4 @@
 
 .moving-stars {
   animation: moveStars 15s linear infinite;
-}
-
-/* Add staggered lazy loading animations */
-@keyframes lazyFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.lazy-load {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-}
-
-.lazy-load.animate-fade-in {
-  opacity: 1;
-  transform: translateY(0);
 }

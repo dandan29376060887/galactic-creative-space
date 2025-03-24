@@ -36,7 +36,7 @@ const Index = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Enhanced intersection observer with staggered animations
+  // Add intersection observer for more sophisticated animations
   useEffect(() => {
     const observerOptions = {
       root: null,
@@ -47,27 +47,15 @@ const Index = () => {
     const observerCallback = (entries: IntersectionObserverEntry[]) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          // Apply different animations based on scroll direction
           entry.target.classList.add('animate-fade-in');
           entry.target.classList.remove('opacity-0', 'translate-y-10');
           
           // Add staggered animations to child elements
           const children = entry.target.querySelectorAll('.stagger-animation');
           children.forEach((child, index) => {
-            // Stagger the animations with increasing delays
             (child as HTMLElement).style.animationDelay = `${0.1 + index * 0.1}s`;
-            (child as HTMLElement).style.transitionDelay = `${0.1 + index * 0.1}s`;
             child.classList.add('animate-fade-in');
             child.classList.remove('opacity-0');
-          });
-
-          // Add lazy animation to specific elements
-          const lazyElements = entry.target.querySelectorAll('.lazy-animate');
-          lazyElements.forEach((element, index) => {
-            setTimeout(() => {
-              element.classList.add('animate-fade-in', 'scale-100');
-              element.classList.remove('opacity-0', 'scale-95');
-            }, index * 150);
           });
         }
       });
@@ -82,16 +70,8 @@ const Index = () => {
       observer.observe(section);
     });
 
-    // Also observe individual elements that need lazy animations
-    const lazyElements = document.querySelectorAll('.lazy-load');
-    lazyElements.forEach(element => {
-      element.classList.add('opacity-0', 'scale-95', 'transition-all', 'duration-500');
-      observer.observe(element);
-    });
-
     return () => {
       sections.forEach(section => observer.unobserve(section));
-      lazyElements.forEach(element => observer.unobserve(element));
     };
   }, [isLoading]);
 
