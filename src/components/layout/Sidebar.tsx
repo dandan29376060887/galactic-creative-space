@@ -50,7 +50,7 @@ export default function Sidebar() {
       "fixed z-40 transition-all duration-300",
       isMobile 
         ? "bottom-6 left-1/2 transform -translate-x-1/2 w-auto" 
-        : "top-1/2 left-6 transform -translate-y-1/2 h-auto"
+        : "top-1/2 right-6 transform -translate-y-1/2 h-auto" // Changed from left-6 to right-6
     )}>
       <nav className={cn(
         "glass-card flex items-center justify-center p-2",
@@ -79,7 +79,7 @@ export default function Sidebar() {
             <item.icon size={isMobile ? 20 : 22} />
             {!isMobile && (
               <span className={cn(
-                "ml-2 text-sm opacity-0 absolute left-full pl-2 whitespace-nowrap",
+                "mr-2 text-sm opacity-0 absolute right-full pr-2 whitespace-nowrap", // Changed from left-full to right-full and ml-2 to mr-2
                 "group-hover:opacity-100 transition-opacity duration-300"
               )}>
                 {item.name}

@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Card } from '../ui/card';
-import { Briefcase, Star, Trophy } from 'lucide-react';
+import { Briefcase, Star, Trophy, Award } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ExperienceItem {
@@ -17,11 +17,14 @@ interface Achievement {
   id: number;
   title: string;
   description: string;
+  icon: React.ElementType;
 }
 
 export default function Experience() {
   const timelineRef = useRef<HTMLDivElement>(null);
   const [animationProgress, setAnimationProgress] = useState(0);
+  const [starRotation, setStarRotation] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   // Handle scroll animation for timeline
   useEffect(() => {
@@ -37,6 +40,18 @@ export default function Experience() {
       const visibleRatio = visiblePortion / element.offsetHeight;
       
       setAnimationProgress(Math.min(100, visibleRatio * 150));
+      
+      // Calculate star rotation based on scroll
+      setStarRotation(visibleRatio * 720); // 2 full rotations
+
+      // Update active experience item based on scroll
+      const experienceItems = document.querySelectorAll('[data-experience-item]');
+      experienceItems.forEach((item, index) => {
+        const itemRect = item.getBoundingClientRect();
+        if (itemRect.top <= windowHeight * 0.6 && itemRect.bottom >= windowHeight * 0.4) {
+          setActiveIndex(index);
+        }
+      });
     };
     
     window.addEventListener('scroll', handleScroll);
@@ -52,24 +67,24 @@ export default function Experience() {
       year: '2023 - Present',
       company: 'Tech Innovations Inc.',
       title: 'Senior Developer',
-      description: 'Leading a team of developers to create cutting-edge web applications with modern frontend technologies.',
-      skills: ['React', 'TypeScript', 'Node.js']
+      description: 'Leading a team of developers to create cutting-edge web applications with modern frontend technologies. Implementing advanced UI patterns and optimizing application performance.',
+      skills: ['React', 'TypeScript', 'Node.js', 'GraphQL']
     },
     {
       id: 2,
       year: '2021 - 2023',
       company: 'Digital Solutions Co.',
       title: 'Frontend Developer',
-      description: 'Designed and built responsive web applications using React and modern CSS techniques.',
-      skills: ['React', 'JavaScript', 'CSS', 'UI/UX']
+      description: 'Designed and built responsive web applications using React and modern CSS techniques. Collaborated with UX designers to implement pixel-perfect interfaces and animations.',
+      skills: ['React', 'JavaScript', 'CSS', 'UI/UX', 'Tailwind']
     },
     {
       id: 3,
       year: '2019 - 2021',
       company: 'Creative Web Labs',
       title: 'Junior Developer',
-      description: 'Developed and maintained responsive websites and implemented UI components for various clients.',
-      skills: ['HTML', 'CSS', 'JavaScript', 'jQuery']
+      description: 'Developed and maintained responsive websites and implemented UI components for various clients. Worked with international teams to deliver high-quality web solutions.',
+      skills: ['HTML', 'CSS', 'JavaScript', 'jQuery', 'Bootstrap']
     }
   ];
 
@@ -77,17 +92,32 @@ export default function Experience() {
     {
       id: 1,
       title: 'Best Developer Award 2023',
-      description: 'Recognized for exceptional contribution to product development and team leadership.'
+      description: 'Recognized for exceptional contribution to product development and team leadership.',
+      icon: Trophy
     },
     {
       id: 2,
       title: 'Speaker at ReactConf 2022',
-      description: 'Presented advanced React patterns and performance optimization techniques.'
+      description: 'Presented advanced React patterns and performance optimization techniques.',
+      icon: Award
     },
     {
       id: 3,
       title: 'Open Source Contributor',
-      description: 'Active contributor to several popular open-source projects with over 50 merged PRs.'
+      description: 'Active contributor to several popular open-source projects with over 50 merged PRs.',
+      icon: Star
+    },
+    {
+      id: 4,
+      title: 'Hackathon Winner 2021',
+      description: 'Led a team to victory in the annual tech innovation hackathon.',
+      icon: Award
+    },
+    {
+      id: 5,
+      title: 'Certified Cloud Architect',
+      description: 'Achieved professional certification in cloud architecture and deployment.',
+      icon: Trophy
     }
   ];
   
@@ -138,9 +168,11 @@ export default function Experience() {
             {experienceItems.map((item, index) => (
               <div 
                 key={item.id}
+                data-experience-item
                 className={cn(
-                  "relative flex flex-col md:flex-row md:items-center",
-                  index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
+                  "relative flex flex-col md:flex-row md:items-center transition-all duration-500",
+                  index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse",
+                  activeIndex === index ? "scale-105" : "scale-100 opacity-80"
                 )}
               >
                 {/* Timeline dot */}
@@ -173,7 +205,13 @@ export default function Experience() {
                           key={i} 
                           className="px-3 py-1 bg-white/10 text-white/80 text-xs rounded-full flex items-center gap-1"
                         >
-                          <Star size={10} className="text-cosmic-nebula-pink" />
+                          <Star 
+                            size={10} 
+                            className="text-cosmic-nebula-pink transition-transform duration-300"
+                            style={{ 
+                              transform: activeIndex === index ? `rotate(${starRotation}deg)` : 'rotate(0deg)'
+                            }}
+                          />
                           {skill}
                         </span>
                       ))}
@@ -185,7 +223,7 @@ export default function Experience() {
           </div>
         </div>
 
-        {/* Achievements Section */}
+        {/* Achievements Section with Enhanced Visuals */}
         <div className="mt-20">
           <div className="text-center mb-12">
             <span className="px-3 py-1 rounded-full bg-white/10 text-sm text-white/80 mb-4 inline-block">
@@ -195,14 +233,20 @@ export default function Experience() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {achievements.map((achievement) => (
+            {achievements.map((achievement, index) => (
               <Card 
                 key={achievement.id} 
                 className="p-6 bg-white/5 backdrop-blur-md border border-white/10 shadow-lg transform transition-all duration-500 hover:translate-y-[-8px] hover:shadow-glow"
               >
                 <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 rounded-full cosmic-gradient flex items-center justify-center mr-4">
-                    <Trophy size={24} className="text-white" />
+                  <div className="w-12 h-12 rounded-full cosmic-gradient flex items-center justify-center mr-4 animate-pulse-glow">
+                    <achievement.icon 
+                      size={24} 
+                      className="text-white animate-spin-slow"
+                      style={{ 
+                        animationDuration: `${5 + index}s`
+                      }}
+                    />
                   </div>
                   <h3 className="text-xl font-semibold text-white">{achievement.title}</h3>
                 </div>

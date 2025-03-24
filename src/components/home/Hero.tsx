@@ -6,39 +6,68 @@ import { ChevronDown } from 'lucide-react';
 export default function Hero() {
   const [displayText, setDisplayText] = useState("");
   const [nameText, setNameText] = useState("");
-  const fullText = "Welcome to my cosmic realm";
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [loopNum, setLoopNum] = useState(0);
+  const [typingSpeed, setTypingSpeed] = useState(100);
+  
+  const welcomeTexts = [
+    "Welcome to my cosmic realm",
+    "Exploring digital frontiers",
+    "Crafting digital experiences",
+    "Building the future with code"
+  ];
   const fullName = "John Doe";
-  const typingSpeed = 100;
   const nameTypingSpeed = 150;
   const textRef = useRef<HTMLHeadingElement>(null);
   
   useEffect(() => {
-    // Type the welcome text
-    let currentIndex = 0;
-    const typingInterval = setInterval(() => {
-      if (currentIndex < fullText.length) {
-        setDisplayText(fullText.substring(0, currentIndex + 1));
-        currentIndex++;
-      } else {
-        clearInterval(typingInterval);
-        
-        // Start typing name after a delay
-        setTimeout(() => {
-          let nameIndex = 0;
-          const nameTypingInterval = setInterval(() => {
-            if (nameIndex < fullName.length) {
-              setNameText(fullName.substring(0, nameIndex + 1));
-              nameIndex++;
-            } else {
-              clearInterval(nameTypingInterval);
-            }
-          }, nameTypingSpeed);
-        }, 500);
-      }
-    }, typingSpeed);
+    let timer: NodeJS.Timeout;
+    const currentText = welcomeTexts[loopNum % welcomeTexts.length];
     
-    return () => clearInterval(typingInterval);
-  }, []);
+    // Typing effect
+    const handleTyping = () => {
+      const i = loopNum % welcomeTexts.length;
+      const fullText = welcomeTexts[i];
+      
+      // Set typing speed
+      const speed = isDeleting ? 50 : 100;
+      
+      if (!isDeleting && displayText === fullText) {
+        // Pause at full text before deleting
+        timer = setTimeout(() => {
+          setIsDeleting(true);
+          setTypingSpeed(50);
+        }, 2000);
+      } else if (isDeleting && displayText === '') {
+        // Move to next text
+        setIsDeleting(false);
+        setTypingSpeed(100);
+        setLoopNum(loopNum + 1);
+      } else {
+        // Update text
+        setDisplayText(
+          isDeleting
+            ? fullText.substring(0, displayText.length - 1)
+            : fullText.substring(0, displayText.length + 1)
+        );
+      }
+    };
+    
+    timer = setTimeout(handleTyping, typingSpeed);
+    
+    return () => clearTimeout(timer);
+  }, [displayText, isDeleting, loopNum, typingSpeed, welcomeTexts]);
+  
+  // Type the name separately
+  useEffect(() => {
+    if (nameText.length < fullName.length) {
+      const nameTimer = setTimeout(() => {
+        setNameText(fullName.substring(0, nameText.length + 1));
+      }, nameTypingSpeed);
+      
+      return () => clearTimeout(nameTimer);
+    }
+  }, [nameText]);
   
   const scrollToAbout = () => {
     const aboutSection = document.getElementById('about');
@@ -58,25 +87,26 @@ export default function Hero() {
       <div className="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 mt-16 relative z-10">
         <div className="flex flex-col justify-center items-start space-y-6 lg:space-y-8">
           <div>
-            <span className="px-3 py-1 rounded-full bg-white/10 text-sm text-white/80 mb-6 inline-block">
+            <span className="px-3 py-1 rounded-full bg-white/10 text-sm text-white/80 mb-6 inline-block animate-pulse-glow">
               Cosmic Explorer & Developer
             </span>
             <h2 className="text-2xl md:text-3xl text-cosmic-nebula-pink mb-4">
               <span className="text-gradient">{nameText}</span>
               {nameText.length < fullName.length && <span className="animate-pulse">|</span>}
             </h2>
-            <h1 ref={textRef} className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2">
+            <h1 ref={textRef} className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2 h-16">
               {displayText}
-              {displayText.length < fullText.length && <span className="animate-pulse">|</span>}
+              <span className="animate-pulse ml-1">|</span>
             </h1>
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-gradient mt-2">
-              Building digital experiences
+              Full-stack developer & UI/UX enthusiast
             </h2>
           </div>
           
           <p className="text-white/70 text-lg md:text-xl max-w-lg animate-fade-in" style={{ animationDelay: "1s" }}>
-            A passionate developer crafting beautiful, functional digital experiences. Welcome to my 
-            portfolio—a cosmic journey through my projects and skills.
+            I'm a passionate technologist with a love for creating elegant solutions to complex problems. 
+            With expertise in modern web technologies, I craft immersive digital experiences that blend 
+            functionality with stunning design.
           </p>
           
           <div className="flex flex-wrap gap-4 animate-fade-in" style={{ animationDelay: "1.5s" }}>
@@ -90,7 +120,7 @@ export default function Hero() {
         </div>
         
         <div className="hidden lg:flex items-center justify-center relative">
-          {/* Cosmic illustration/animation placeholder */}
+          {/* Cosmic illustration/animation with enhanced animations */}
           <div className="relative w-80 h-80">
             <div className="absolute inset-0 cosmic-gradient rounded-full opacity-20 animate-pulse-glow"></div>
             <div className="absolute inset-4 bg-cosmic-background rounded-full"></div>
@@ -98,16 +128,22 @@ export default function Hero() {
               {/* Center planet */}
               <div className="w-32 h-32 rounded-full bg-gradient-to-br from-cosmic-nebula-blue to-cosmic-planet-teal animate-spin-slow"></div>
               
-              {/* Orbiting elements */}
+              {/* Orbiting elements with enhanced animation */}
               <div className="absolute w-full h-full">
-                <div className="absolute w-10 h-10 rounded-full bg-cosmic-nebula-pink" style={{
+                <div className="absolute w-10 h-10 rounded-full bg-cosmic-nebula-pink shadow-glow" style={{
                   animation: "orbit 15s linear infinite",
                   transformOrigin: "center"
                 }}></div>
                 
-                <div className="absolute w-6 h-6 rounded-full bg-cosmic-planet-orange" style={{
+                <div className="absolute w-6 h-6 rounded-full bg-cosmic-planet-orange shadow-glow" style={{
                   animation: "orbit 10s linear infinite",
                   animationDelay: "-5s",
+                  transformOrigin: "center"
+                }}></div>
+
+                <div className="absolute w-4 h-4 rounded-full bg-cosmic-comet-blue shadow-glow" style={{
+                  animation: "orbit 18s linear infinite",
+                  animationDelay: "-8s",
                   transformOrigin: "center"
                 }}></div>
               </div>
@@ -120,12 +156,14 @@ export default function Hero() {
         <ChevronDown className="text-white/50" size={32} />
       </div>
       
-      {/* Floating stars */}
+      {/* Enhanced floating stars with varying sizes and animations */}
       {[...Array(30)].map((_, i) => (
         <div
           key={i}
-          className="absolute w-1 h-1 rounded-full bg-white"
+          className="absolute rounded-full bg-white"
           style={{
+            width: `${Math.random() * 2 + 1}px`,
+            height: `${Math.random() * 2 + 1}px`,
             top: `${Math.random() * 100}%`,
             left: `${Math.random() * 100}%`,
             opacity: Math.random() * 0.5 + 0.1,

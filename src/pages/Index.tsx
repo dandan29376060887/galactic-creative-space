@@ -1,5 +1,5 @@
 
-import { useEffect, lazy, Suspense } from 'react';
+import { useEffect, lazy, Suspense, useState } from 'react';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import Sidebar from '../components/layout/Sidebar';
@@ -13,7 +13,7 @@ const Projects = lazy(() => import('../components/home/Projects'));
 const Skills = lazy(() => import('../components/home/Skills'));
 const Contact = lazy(() => import('../components/home/Contact'));
 
-// Loading placeholder for lazy-loaded components
+// Enhanced loading placeholder for lazy-loaded components
 const SectionLoader = () => (
   <div className="w-full h-screen flex items-center justify-center">
     <div className="w-16 h-16 rounded-full cosmic-gradient animate-pulse-glow flex items-center justify-center">
@@ -25,7 +25,18 @@ const SectionLoader = () => (
 );
 
 const Index = () => {
-  // Add intersection observer for animations
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate loading state for a smoother initial experience
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Add intersection observer for more sophisticated animations
   useEffect(() => {
     const observerOptions = {
       root: null,
@@ -38,6 +49,14 @@ const Index = () => {
         if (entry.isIntersecting) {
           entry.target.classList.add('animate-fade-in');
           entry.target.classList.remove('opacity-0', 'translate-y-10');
+          
+          // Add staggered animations to child elements
+          const children = entry.target.querySelectorAll('.stagger-animation');
+          children.forEach((child, index) => {
+            (child as HTMLElement).style.animationDelay = `${0.1 + index * 0.1}s`;
+            child.classList.add('animate-fade-in');
+            child.classList.remove('opacity-0');
+          });
         }
       });
     };
@@ -54,7 +73,7 @@ const Index = () => {
     return () => {
       sections.forEach(section => observer.unobserve(section));
     };
-  }, []);
+  }, [isLoading]);
 
   // Smooth scroll to section when clicking on navigation links
   useEffect(() => {
@@ -86,6 +105,14 @@ const Index = () => {
       document.removeEventListener('click', handleAnchorClick);
     };
   }, []);
+  
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-cosmic-background z-50">
+        <SectionLoader />
+      </div>
+    );
+  }
   
   return (
     <div className="relative min-h-screen w-full">
