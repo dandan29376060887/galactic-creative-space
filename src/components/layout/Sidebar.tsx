@@ -17,9 +17,8 @@ export default function Sidebar() {
   const items: SidebarItem[] = [
     { name: 'Home', icon: Home, href: '#home' },
     { name: 'About', icon: User, href: '#about' },
-    { name: 'Experience', icon: Briefcase, href: '#experience' },
-    { name: 'Projects', icon: CodesandboxIcon, href: '#projects' },
-    { name: 'Skills', icon: Award, href: '#skills' },
+    { name: 'Projects', icon: Briefcase, href: '#projects' },
+    { name: 'Skills', icon: CodesandboxIcon, href: '#skills' },
     { name: 'Contact', icon: Mail, href: '#contact' }
   ];
   
@@ -51,7 +50,7 @@ export default function Sidebar() {
       "fixed z-40 transition-all duration-300",
       isMobile 
         ? "bottom-6 left-1/2 transform -translate-x-1/2 w-auto" 
-        : "top-1/2 right-6 transform -translate-y-1/2 h-auto" // Changed from left to right
+        : "top-1/2 left-6 transform -translate-y-1/2 h-auto"
     )}>
       <nav className={cn(
         "glass-card flex items-center justify-center p-2",
@@ -77,16 +76,10 @@ export default function Sidebar() {
                 )}
               />
             )}
-            <item.icon 
-              size={isMobile ? 20 : 22} 
-              className={cn(
-                "transition-transform duration-300",
-                activeSection === item.name.toLowerCase() ? "scale-110" : "scale-100"
-              )}
-            />
+            <item.icon size={isMobile ? 20 : 22} />
             {!isMobile && (
               <span className={cn(
-                "mr-2 text-sm opacity-0 absolute right-full pr-2 whitespace-nowrap", // Changed from left to right
+                "ml-2 text-sm opacity-0 absolute left-full pl-2 whitespace-nowrap",
                 "group-hover:opacity-100 transition-opacity duration-300"
               )}>
                 {item.name}

@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from 'react';
 import GlowingButton from '../ui/GlowingButton';
 import { ChevronDown } from 'lucide-react';
@@ -12,51 +13,31 @@ export default function Hero() {
   const textRef = useRef<HTMLHeadingElement>(null);
   
   useEffect(() => {
-    // Type the welcome text with looping animation
+    // Type the welcome text
     let currentIndex = 0;
-    let isTyping = true;
-    let typingTimeout: NodeJS.Timeout;
-    
-    const typingAnimation = () => {
-      if (isTyping) {
-        if (currentIndex < fullText.length) {
-          setDisplayText(fullText.substring(0, currentIndex + 1));
-          currentIndex++;
-          typingTimeout = setTimeout(typingAnimation, typingSpeed);
-        } else {
-          isTyping = false;
-          typingTimeout = setTimeout(typingAnimation, 2000); // Pause before deleting
-        }
+    const typingInterval = setInterval(() => {
+      if (currentIndex < fullText.length) {
+        setDisplayText(fullText.substring(0, currentIndex + 1));
+        currentIndex++;
       } else {
-        if (currentIndex > 0) {
-          setDisplayText(fullText.substring(0, currentIndex - 1));
-          currentIndex--;
-          typingTimeout = setTimeout(typingAnimation, typingSpeed / 2);
-        } else {
-          isTyping = true;
-          typingTimeout = setTimeout(typingAnimation, 1000); // Pause before retyping
-        }
+        clearInterval(typingInterval);
+        
+        // Start typing name after a delay
+        setTimeout(() => {
+          let nameIndex = 0;
+          const nameTypingInterval = setInterval(() => {
+            if (nameIndex < fullName.length) {
+              setNameText(fullName.substring(0, nameIndex + 1));
+              nameIndex++;
+            } else {
+              clearInterval(nameTypingInterval);
+            }
+          }, nameTypingSpeed);
+        }, 500);
       }
-    };
+    }, typingSpeed);
     
-    typingAnimation();
-    
-    // Add name typing animation after a delay
-    setTimeout(() => {
-      let nameIndex = 0;
-      const nameTypingInterval = setInterval(() => {
-        if (nameIndex < fullName.length) {
-          setNameText(fullName.substring(0, nameIndex + 1));
-          nameIndex++;
-        } else {
-          clearInterval(nameTypingInterval);
-        }
-      }, nameTypingSpeed);
-    }, 1000);
-    
-    return () => {
-      clearTimeout(typingTimeout);
-    };
+    return () => clearInterval(typingInterval);
   }, []);
   
   const scrollToAbout = () => {
@@ -86,7 +67,7 @@ export default function Hero() {
             </h2>
             <h1 ref={textRef} className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2">
               {displayText}
-              <span className="animate-pulse">|</span>
+              {displayText.length < fullText.length && <span className="animate-pulse">|</span>}
             </h1>
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-gradient mt-2">
               Building digital experiences

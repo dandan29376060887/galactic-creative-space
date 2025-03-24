@@ -1,5 +1,5 @@
 
-import { useEffect, useState, lazy, Suspense } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import Sidebar from '../components/layout/Sidebar';
@@ -25,35 +25,19 @@ const SectionLoader = () => (
 );
 
 const Index = () => {
-  const [visibleSections, setVisibleSections] = useState<string[]>([]);
-
   // Add intersection observer for animations
   useEffect(() => {
     const observerOptions = {
       root: null,
       rootMargin: '0px',
-      threshold: 0.15
+      threshold: 0.1
     };
 
     const observerCallback = (entries: IntersectionObserverEntry[]) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          const id = entry.target.id;
-          setVisibleSections(prev => {
-            if (!prev.includes(id)) {
-              return [...prev, id];
-            }
-            return prev;
-          });
-          
-          // Add animation classes to children elements
-          const children = entry.target.querySelectorAll('[data-animate]');
-          children.forEach((child, index) => {
-            setTimeout(() => {
-              child.classList.add('animate-fade-in');
-              child.classList.remove('opacity-0', 'translate-y-10');
-            }, index * 100);
-          });
+          entry.target.classList.add('animate-fade-in');
+          entry.target.classList.remove('opacity-0', 'translate-y-10');
         }
       });
     };
@@ -65,13 +49,6 @@ const Index = () => {
     sections.forEach(section => {
       section.classList.add('opacity-0', 'translate-y-10', 'transition-all', 'duration-700');
       observer.observe(section);
-      
-      // Find all elements to animate within sections
-      const animatedElements = section.querySelectorAll('h1, h2, h3, p, .card, [data-animate]');
-      animatedElements.forEach(el => {
-        el.setAttribute('data-animate', 'true');
-        el.classList.add('opacity-0', 'translate-y-10', 'transition-all', 'duration-500');
-      });
     });
 
     return () => {
@@ -122,28 +99,23 @@ const Index = () => {
         </Suspense>
         
         <Suspense fallback={<SectionLoader />}>
-          {visibleSections.includes('about') || <div id="about" className="h-screen"></div>}
-          {visibleSections.includes('about') && <About />}
+          <About />
         </Suspense>
         
         <Suspense fallback={<SectionLoader />}>
-          {visibleSections.includes('experience') || <div id="experience" className="h-screen"></div>}
-          {visibleSections.includes('experience') && <Experience />}
+          <Experience />
         </Suspense>
         
         <Suspense fallback={<SectionLoader />}>
-          {visibleSections.includes('projects') || <div id="projects" className="h-screen"></div>}
-          {visibleSections.includes('projects') && <Projects />}
+          <Projects />
         </Suspense>
         
         <Suspense fallback={<SectionLoader />}>
-          {visibleSections.includes('skills') || <div id="skills" className="h-screen"></div>}
-          {visibleSections.includes('skills') && <Skills />}
+          <Skills />
         </Suspense>
         
         <Suspense fallback={<SectionLoader />}>
-          {visibleSections.includes('contact') || <div id="contact" className="h-screen"></div>}
-          {visibleSections.includes('contact') && <Contact />}
+          <Contact />
         </Suspense>
       </main>
       
