@@ -1,5 +1,5 @@
 
-import { useEffect, lazy, Suspense, useState } from 'react';
+import { useEffect, lazy, Suspense, useState, useRef } from 'react';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import Sidebar from '../components/layout/Sidebar';
@@ -26,6 +26,8 @@ const SectionLoader = () => (
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [visibleSections, setVisibleSections] = useState<string[]>([]);
+  const sectionsRef = useRef<HTMLDivElement>(null);
 
   // Simulate loading state for a smoother initial experience
   useEffect(() => {
@@ -47,16 +49,17 @@ const Index = () => {
     const observerCallback = (entries: IntersectionObserverEntry[]) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('animate-fade-in');
-          entry.target.classList.remove('opacity-0', 'translate-y-10');
-          
-          // Add staggered animations to child elements
-          const children = entry.target.querySelectorAll('.stagger-animation');
-          children.forEach((child, index) => {
-            (child as HTMLElement).style.animationDelay = `${0.1 + index * 0.1}s`;
-            child.classList.add('animate-fade-in');
-            child.classList.remove('opacity-0');
+          // Animate section when it comes into view
+          const animatableElements = entry.target.querySelectorAll('[data-animate="true"]');
+          animatableElements.forEach(element => {
+            element.classList.add('animate-fade-in');
           });
+          
+          // Track visible sections for navigation
+          const sectionId = entry.target.id;
+          if (sectionId && !visibleSections.includes(sectionId)) {
+            setVisibleSections(prev => [...prev, sectionId]);
+          }
         }
       });
     };
@@ -66,14 +69,13 @@ const Index = () => {
     // Select all sections to animate
     const sections = document.querySelectorAll('section');
     sections.forEach(section => {
-      section.classList.add('opacity-0', 'translate-y-10', 'transition-all', 'duration-700');
       observer.observe(section);
     });
 
     return () => {
       sections.forEach(section => observer.unobserve(section));
     };
-  }, [isLoading]);
+  }, [visibleSections]);
 
   // Smooth scroll to section when clicking on navigation links
   useEffect(() => {
@@ -120,29 +122,41 @@ const Index = () => {
       <Header />
       <Sidebar />
       
-      <main>
+      <main ref={sectionsRef} className="snap-y snap-mandatory">
         <Suspense fallback={<SectionLoader />}>
-          <Hero />
+          <div className="snap-start min-h-screen">
+            <Hero />
+          </div>
         </Suspense>
         
         <Suspense fallback={<SectionLoader />}>
-          <About />
+          <div className="snap-start min-h-screen">
+            <About />
+          </div>
         </Suspense>
         
         <Suspense fallback={<SectionLoader />}>
-          <Experience />
+          <div className="snap-start min-h-screen">
+            <Experience />
+          </div>
         </Suspense>
         
         <Suspense fallback={<SectionLoader />}>
-          <Projects />
+          <div className="snap-start min-h-screen">
+            <Projects />
+          </div>
         </Suspense>
         
         <Suspense fallback={<SectionLoader />}>
-          <Skills />
+          <div className="snap-start min-h-screen">
+            <Skills />
+          </div>
         </Suspense>
         
         <Suspense fallback={<SectionLoader />}>
-          <Contact />
+          <div className="snap-start min-h-screen">
+            <Contact />
+          </div>
         </Suspense>
       </main>
       

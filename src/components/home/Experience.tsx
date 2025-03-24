@@ -25,6 +25,7 @@ export default function Experience() {
   const [animationProgress, setAnimationProgress] = useState(0);
   const [starRotation, setStarRotation] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
 
   // Handle scroll animation for timeline
   useEffect(() => {
@@ -34,6 +35,11 @@ export default function Experience() {
       const element = timelineRef.current;
       const rect = element.getBoundingClientRect();
       const windowHeight = window.innerHeight;
+      
+      // Check if section is visible
+      if (rect.top < windowHeight * 0.75) {
+        setIsVisible(true);
+      }
       
       // Calculate how much of the timeline is visible
       const visiblePortion = Math.max(0, Math.min(windowHeight - rect.top, element.offsetHeight));
@@ -122,7 +128,7 @@ export default function Experience() {
   ];
   
   return (
-    <section id="experience" className="py-24 px-6 relative overflow-hidden">
+    <section id="experience" className="min-h-screen py-24 px-6 relative overflow-hidden">
       {/* Animated stars that move along the timeline */}
       <div className="absolute left-4 md:left-1/2 top-1/3 bottom-1/3 w-px">
         {[...Array(10)].map((_, i) => (
@@ -141,7 +147,7 @@ export default function Experience() {
       </div>
       
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-16 opacity-0 translate-y-10" data-animate="true">
           <span className="px-3 py-1 rounded-full bg-white/10 text-sm text-white/80 mb-4 inline-block">
             Work Experience
           </span>
@@ -152,10 +158,10 @@ export default function Experience() {
         </div>
         
         <div className="relative" ref={timelineRef}>
-          {/* Timeline line */}
+          {/* Timeline line with pulsing animation */}
           <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-cosmic-nebula-blue/20 via-cosmic-nebula-pink/50 to-cosmic-deep-purple/30">
             <div 
-              className="absolute top-0 left-0 w-full bg-cosmic-gradient"
+              className="absolute top-0 left-0 w-full bg-cosmic-gradient animate-pulse-slow"
               style={{ 
                 height: `${animationProgress}%`, 
                 transition: 'height 0.5s ease-out',
@@ -170,13 +176,16 @@ export default function Experience() {
                 key={item.id}
                 data-experience-item
                 className={cn(
-                  "relative flex flex-col md:flex-row md:items-center transition-all duration-500",
+                  "relative flex flex-col md:flex-row md:items-center transition-all duration-500 opacity-0 translate-y-10",
                   index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse",
-                  activeIndex === index ? "scale-105" : "scale-100 opacity-80"
+                  activeIndex === index ? "scale-105" : "scale-100 opacity-80",
+                  isVisible ? "animate-fade-in" : ""
                 )}
+                style={{ animationDelay: `${0.3 * index}s` }}
+                data-animate="true"
               >
-                {/* Timeline dot */}
-                <div className="absolute left-4 md:left-1/2 w-8 h-8 rounded-full cosmic-gradient flex items-center justify-center transform -translate-x-1/2 z-10 shadow-glow">
+                {/* Timeline dot with pulsing glow */}
+                <div className="absolute left-4 md:left-1/2 w-8 h-8 rounded-full cosmic-gradient flex items-center justify-center transform -translate-x-1/2 z-10 shadow-glow animate-pulse-slow">
                   <Briefcase size={16} className="text-white" />
                 </div>
                 
@@ -225,7 +234,7 @@ export default function Experience() {
 
         {/* Achievements Section with Enhanced Visuals */}
         <div className="mt-20">
-          <div className="text-center mb-12">
+          <div className="text-center mb-12 opacity-0 translate-y-10" data-animate="true" style={{ animationDelay: '0.5s' }}>
             <span className="px-3 py-1 rounded-full bg-white/10 text-sm text-white/80 mb-4 inline-block">
               Recognition
             </span>
@@ -236,7 +245,9 @@ export default function Experience() {
             {achievements.map((achievement, index) => (
               <Card 
                 key={achievement.id} 
-                className="p-6 bg-white/5 backdrop-blur-md border border-white/10 shadow-lg transform transition-all duration-500 hover:translate-y-[-8px] hover:shadow-glow"
+                className="p-6 bg-white/5 backdrop-blur-md border border-white/10 shadow-lg transform transition-all duration-500 hover:translate-y-[-8px] hover:shadow-glow opacity-0 translate-y-10"
+                data-animate="true"
+                style={{ animationDelay: `${0.7 + index * 0.2}s` }}
               >
                 <div className="flex items-center mb-4">
                   <div className="w-12 h-12 rounded-full cosmic-gradient flex items-center justify-center mr-4 animate-pulse-glow">
