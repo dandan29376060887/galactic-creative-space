@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Card } from '../ui/card';
-import { Briefcase, Star, Trophy } from 'lucide-react';
+import { Briefcase, Star, Trophy, Award, Medal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ExperienceItem {
@@ -17,11 +17,13 @@ interface Achievement {
   id: number;
   title: string;
   description: string;
+  icon: React.ElementType;
 }
 
 export default function Experience() {
   const timelineRef = useRef<HTMLDivElement>(null);
   const [animationProgress, setAnimationProgress] = useState(0);
+  const [activeItem, setActiveItem] = useState<number>(1);
 
   // Handle scroll animation for timeline
   useEffect(() => {
@@ -37,6 +39,16 @@ export default function Experience() {
       const visibleRatio = visiblePortion / element.offsetHeight;
       
       setAnimationProgress(Math.min(100, visibleRatio * 150));
+      
+      // Update active item based on scroll position
+      const experienceCards = document.querySelectorAll('[data-experience-item]');
+      experienceCards.forEach((card) => {
+        const cardRect = card.getBoundingClientRect();
+        if (cardRect.top <= windowHeight * 0.6 && cardRect.bottom >= windowHeight * 0.4) {
+          const id = parseInt(card.getAttribute('data-experience-item') || '1');
+          setActiveItem(id);
+        }
+      });
     };
     
     window.addEventListener('scroll', handleScroll);
@@ -77,34 +89,55 @@ export default function Experience() {
     {
       id: 1,
       title: 'Best Developer Award 2023',
-      description: 'Recognized for exceptional contribution to product development and team leadership.'
+      description: 'Recognized for exceptional contribution to product development and team leadership.',
+      icon: Trophy
     },
     {
       id: 2,
       title: 'Speaker at ReactConf 2022',
-      description: 'Presented advanced React patterns and performance optimization techniques.'
+      description: 'Presented advanced React patterns and performance optimization techniques.',
+      icon: Award
     },
     {
       id: 3,
       title: 'Open Source Contributor',
-      description: 'Active contributor to several popular open-source projects with over 50 merged PRs.'
+      description: 'Active contributor to several popular open-source projects with over 50 merged PRs.',
+      icon: Medal
     }
   ];
   
   return (
     <section id="experience" className="py-24 px-6 relative overflow-hidden">
-      {/* Animated stars that move along the timeline */}
+      {/* Animated background with moving stars */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="moving-stars opacity-20">
+          {[...Array(50)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 rounded-full bg-white"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                opacity: Math.random() * 0.7 + 0.3,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+      
+      {/* Animated timeline stars that move with scroll */}
       <div className="absolute left-4 md:left-1/2 top-1/3 bottom-1/3 w-px">
         {[...Array(10)].map((_, i) => (
           <div 
             key={i}
-            className="absolute w-2 h-2 rounded-full cosmic-gradient"
+            className="absolute w-3 h-3 rounded-full cosmic-gradient"
             style={{
               top: `${(i * 10) % 100}%`,
-              left: '-3px',
+              left: '-4px',
               opacity: 0.6 + (i % 4 * 0.1),
-              transform: `translateY(${animationProgress - (i * 20)}px)`,
+              transform: `translateY(${animationProgress - (i * 20)}px) rotate(${animationProgress * 3}deg)`,
               transition: 'transform 0.5s ease-out',
+              boxShadow: '0 0 10px rgba(168, 85, 247, 0.7)'
             }}
           />
         ))}
@@ -138,14 +171,22 @@ export default function Experience() {
             {experienceItems.map((item, index) => (
               <div 
                 key={item.id}
+                data-experience-item={item.id}
                 className={cn(
-                  "relative flex flex-col md:flex-row md:items-center",
+                  "relative flex flex-col md:flex-row md:items-center transition-all duration-500",
+                  activeItem === item.id ? "scale-105" : "scale-100",
                   index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
                 )}
               >
-                {/* Timeline dot */}
+                {/* Timeline dot with rotating icon */}
                 <div className="absolute left-4 md:left-1/2 w-8 h-8 rounded-full cosmic-gradient flex items-center justify-center transform -translate-x-1/2 z-10 shadow-glow">
-                  <Briefcase size={16} className="text-white" />
+                  <Briefcase 
+                    size={16} 
+                    className="text-white transition-transform"
+                    style={{
+                      transform: activeItem === item.id ? `rotate(${animationProgress * 3.6}deg)` : 'rotate(0deg)'
+                    }}
+                  />
                 </div>
                 
                 {/* Content */}
@@ -153,13 +194,25 @@ export default function Experience() {
                   "md:w-1/2 ml-12 md:ml-0",
                   index % 2 === 0 ? "md:pr-12" : "md:pl-12"
                 )}>
-                  <Card className="h-full p-6 bg-white/5 backdrop-blur-md border border-white/10 shadow-lg transform transition-all duration-500 hover:translate-y-[-8px] hover:shadow-glow">
+                  <Card className={cn(
+                    "h-full p-6 bg-white/5 backdrop-blur-md border border-white/10 shadow-lg transition-all duration-500 hover:translate-y-[-8px]",
+                    activeItem === item.id ? "shadow-glow border-cosmic-nebula-pink/30" : "hover:shadow-glow"
+                  )}>
                     <div className="flex justify-between items-center mb-4">
                       <span className="inline-block px-3 py-1 rounded-full bg-cosmic-nebula-blue/20 text-cosmic-nebula-blue text-sm">
                         {item.year}
                       </span>
-                      <div className="w-10 h-10 rounded-full cosmic-gradient flex items-center justify-center">
-                        <Briefcase size={18} className="text-white" />
+                      <div className={cn(
+                        "w-10 h-10 rounded-full cosmic-gradient flex items-center justify-center transition-transform duration-500",
+                        activeItem === item.id ? "scale-110" : ""
+                      )}>
+                        <Briefcase 
+                          size={18} 
+                          className="text-white" 
+                          style={{
+                            animation: activeItem === item.id ? 'spin-slow 10s linear infinite' : 'none'
+                          }}
+                        />
                       </div>
                     </div>
                     
@@ -202,7 +255,7 @@ export default function Experience() {
               >
                 <div className="flex items-center mb-4">
                   <div className="w-12 h-12 rounded-full cosmic-gradient flex items-center justify-center mr-4">
-                    <Trophy size={24} className="text-white" />
+                    <achievement.icon size={24} className="text-white animate-pulse-slow" />
                   </div>
                   <h3 className="text-xl font-semibold text-white">{achievement.title}</h3>
                 </div>
