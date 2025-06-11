@@ -5,7 +5,7 @@ import Footer from '../components/layout/Footer';
 import Sidebar from '../components/layout/Sidebar';
 import StarBackground from '../components/ui/StarBackground';
 
-// Lazy-loaded components with suspense
+// Lazy-loaded components للأداء الأفضل
 const Hero = lazy(() => import('../components/home/Hero'));
 const About = lazy(() => import('../components/home/About'));
 const Experience = lazy(() => import('../components/home/Experience'));
@@ -13,150 +13,161 @@ const Projects = lazy(() => import('../components/home/Projects'));
 const Skills = lazy(() => import('../components/home/Skills'));
 const Contact = lazy(() => import('../components/home/Contact'));
 
-// Enhanced loading placeholder for lazy-loaded components
+// شاشة تحميل بسيطة لتحسين الأداء
 const SectionLoader = () => (
   <div className="w-full h-screen flex items-center justify-center">
-    <div className="w-16 h-16 rounded-full cosmic-gradient animate-pulse-glow flex items-center justify-center">
-      <div className="w-12 h-12 rounded-full bg-cosmic-background flex items-center justify-center">
-        <div className="w-8 h-8 rounded-full cosmic-gradient animate-spin-slow"></div>
-      </div>
+    <div className="relative">
+      <div className="w-16 h-16 border-4 border-cosmic-nebula-blue/30 border-t-cosmic-nebula-blue rounded-full animate-spin"></div>
+      <div className="absolute inset-0 w-16 h-16 border-4 border-cosmic-nebula-pink/20 border-b-cosmic-nebula-pink rounded-full animate-spin-reverse"></div>
     </div>
   </div>
 );
 
 const Index = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [visibleSections, setVisibleSections] = useState<string[]>([]);
+  const [currentSection, setCurrentSection] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const sectionsRef = useRef<HTMLDivElement>(null);
 
-  // Simulate loading state for a smoother initial experience
+  const sections = [
+    { id: 'home', name: 'محطة الإنطلاق', story: 'بداية الرحلة نحو النجوم' },
+    { id: 'about', name: 'غرفة التحكم', story: 'اكتشف من خلف عجلة القيادة' },
+    { id: 'experience', name: 'سجل الرحلات', story: 'المحطات التي وصلت إليها' },
+    { id: 'projects', name: 'مختبر الابتكار', story: 'الاختراعات التي غيرت المجرة' },
+    { id: 'skills', name: 'ترسانة الأدوات', story: 'القوى التي تملكها' },
+    { id: 'contact', name: 'قاعدة الاتصال', story: 'تواصل عبر الأبعاد' }
+  ];
+
+  // التنقل السلس بين الأقسام
+  const navigateToSection = (index: number) => {
+    if (index === currentSection || isTransitioning) return;
+    
+    setIsTransitioning(true);
+    setCurrentSection(index);
+    
+    const targetElement = document.getElementById(sections[index].id);
+    if (targetElement) {
+      targetElement.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    setTimeout(() => setIsTransitioning(false), 1000);
+  };
+
+  // تتبع القسم الحالي بناءً على التمرير
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Add intersection observer for more sophisticated animations
-  useEffect(() => {
-    const observerOptions = {
-      root: null,
-      rootMargin: '0px',
-      threshold: 0.1
-    };
-
-    const observerCallback = (entries: IntersectionObserverEntry[]) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          // Animate section when it comes into view
-          const animatableElements = entry.target.querySelectorAll('[data-animate="true"]');
-          animatableElements.forEach(element => {
-            element.classList.add('animate-fade-in');
-          });
-          
-          // Track visible sections for navigation
-          const sectionId = entry.target.id;
-          if (sectionId && !visibleSections.includes(sectionId)) {
-            setVisibleSections(prev => [...prev, sectionId]);
+    const handleScroll = () => {
+      if (isTransitioning) return;
+      
+      const scrollPosition = window.scrollY + window.innerHeight / 2;
+      
+      sections.forEach((section, index) => {
+        const element = document.getElementById(section.id);
+        if (element) {
+          const { offsetTop, offsetHeight } = element;
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+            setCurrentSection(index);
           }
         }
       });
     };
-
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
     
-    // Select all sections to animate
-    const sections = document.querySelectorAll('section');
-    sections.forEach(section => {
-      observer.observe(section);
-    });
-
-    return () => {
-      sections.forEach(section => observer.unobserve(section));
-    };
-  }, [visibleSections]);
-
-  // Smooth scroll to section when clicking on navigation links
-  useEffect(() => {
-    const handleAnchorClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const anchor = target.closest('a');
-      
-      if (anchor && anchor.hash && anchor.hash.startsWith('#')) {
-        e.preventDefault();
-        
-        const targetId = anchor.hash.substring(1);
-        const targetElement = document.getElementById(targetId);
-        
-        if (targetElement) {
-          window.scrollTo({
-            top: targetElement.offsetTop,
-            behavior: 'smooth'
-          });
-          
-          // Update URL without causing a page reload
-          history.pushState(null, '', anchor.hash);
-        }
-      }
-    };
-    
-    document.addEventListener('click', handleAnchorClick);
-    
-    return () => {
-      document.removeEventListener('click', handleAnchorClick);
-    };
-  }, []);
-  
-  if (isLoading) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-cosmic-background z-50">
-        <SectionLoader />
-      </div>
-    );
-  }
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isTransitioning]);
   
   return (
-    <div className="relative min-h-screen w-full">
+    <div className="relative min-h-screen w-full overflow-x-hidden">
       <StarBackground />
+      
+      {/* شاشة التحكم الجانبية */}
+      <div className="fixed top-1/2 left-6 transform -translate-y-1/2 z-50 bg-black/40 backdrop-blur-md rounded-2xl border border-cosmic-nebula-blue/30 p-4">
+        <div className="text-center mb-4">
+          <div className="w-12 h-12 mx-auto bg-cosmic-nebula-blue/20 rounded-full flex items-center justify-center mb-2">
+            <div className="w-6 h-6 bg-cosmic-nebula-blue rounded-full animate-pulse"></div>
+          </div>
+          <p className="text-xs text-white/60">محطة التحكم</p>
+        </div>
+        
+        <div className="space-y-3">
+          {sections.map((section, index) => (
+            <button
+              key={section.id}
+              onClick={() => navigateToSection(index)}
+              className={`w-full p-3 rounded-xl text-left transition-all duration-300 ${
+                currentSection === index
+                  ? 'bg-cosmic-nebula-blue/30 border border-cosmic-nebula-blue/50 text-white'
+                  : 'bg-white/5 border border-white/10 text-white/70 hover:bg-white/10'
+              }`}
+            >
+              <div className="text-xs font-medium">{section.name}</div>
+              <div className="text-xs text-white/50 mt-1">{section.story}</div>
+            </button>
+          ))}
+        </div>
+        
+        {/* مؤشر التقدم */}
+        <div className="mt-4 pt-4 border-t border-white/10">
+          <div className="flex justify-between text-xs text-white/50 mb-2">
+            <span>التقدم</span>
+            <span>{Math.round(((currentSection + 1) / sections.length) * 100)}%</span>
+          </div>
+          <div className="w-full bg-white/10 rounded-full h-1">
+            <div 
+              className="bg-cosmic-nebula-blue h-1 rounded-full transition-all duration-500"
+              style={{ width: `${((currentSection + 1) / sections.length) * 100}%` }}
+            ></div>
+          </div>
+        </div>
+      </div>
+
       <Header />
       <Sidebar />
       
-      <main ref={sectionsRef} className="snap-y snap-mandatory">
+      <main ref={sectionsRef} className="relative">
+        {/* تأثيرات الانتقال */}
+        {isTransitioning && (
+          <div className="fixed inset-0 bg-cosmic-background/50 backdrop-blur-sm z-40 flex items-center justify-center">
+            <div className="text-center">
+              <div className="cosmic-gradient w-20 h-20 rounded-full animate-pulse mb-4 mx-auto"></div>
+              <p className="text-white text-lg">الانتقال إلى {sections[currentSection].name}...</p>
+              <p className="text-white/60 text-sm mt-2">{sections[currentSection].story}</p>
+            </div>
+          </div>
+        )}
+        
         <Suspense fallback={<SectionLoader />}>
-          <div className="snap-start min-h-screen">
+          <section id="home" className="min-h-screen relative">
             <Hero />
-          </div>
+          </section>
         </Suspense>
         
         <Suspense fallback={<SectionLoader />}>
-          <div className="snap-start min-h-screen">
+          <section id="about" className="min-h-screen relative">
             <About />
-          </div>
+          </section>
         </Suspense>
         
         <Suspense fallback={<SectionLoader />}>
-          <div className="snap-start min-h-screen">
+          <section id="experience" className="min-h-screen relative">
             <Experience />
-          </div>
+          </section>
         </Suspense>
         
         <Suspense fallback={<SectionLoader />}>
-          <div className="snap-start min-h-screen">
+          <section id="projects" className="min-h-screen relative">
             <Projects />
-          </div>
+          </section>
         </Suspense>
         
         <Suspense fallback={<SectionLoader />}>
-          <div className="snap-start min-h-screen">
+          <section id="skills" className="min-h-screen relative">
             <Skills />
-          </div>
+          </section>
         </Suspense>
         
         <Suspense fallback={<SectionLoader />}>
-          <div className="snap-start min-h-screen">
+          <section id="contact" className="min-h-screen relative">
             <Contact />
-          </div>
+          </section>
         </Suspense>
       </main>
       
