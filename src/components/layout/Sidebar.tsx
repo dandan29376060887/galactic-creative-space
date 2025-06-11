@@ -44,6 +44,16 @@ export default function Sidebar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [items]);
+
+  const handleNavClick = (href: string) => {
+    const targetElement = document.querySelector(href);
+    if (targetElement) {
+      targetElement.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
   
   return (
     <aside className={cn(
@@ -69,9 +79,9 @@ export default function Sidebar() {
         )}></div>
         
         {items.map((item, index) => (
-          <a
+          <button
             key={item.name}
-            href={item.href}
+            onClick={() => handleNavClick(item.href)}
             className={cn(
               "relative flex items-center justify-center transition-all duration-300 group",
               isMobile ? "mx-2 my-3 p-2" : "my-2 mx-3 p-2",
@@ -95,7 +105,7 @@ export default function Sidebar() {
                 <div className="absolute bottom-0 right-0 w-1 h-1 bg-cosmic-nebula-blue rounded-full animate-pulse" style={{ animationDelay: '1.5s' }}></div>
               </>
             )}
-          </a>
+          </button>
         ))}
         
         {/* مؤشر الحالة */}
