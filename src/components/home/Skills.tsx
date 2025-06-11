@@ -29,7 +29,6 @@ export default function Skills() {
     };
     
     window.addEventListener('scroll', handleScroll);
-    // Check initially in case section is already in view
     handleScroll();
     
     return () => window.removeEventListener('scroll', handleScroll);
@@ -68,7 +67,10 @@ export default function Skills() {
       </div>
       
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="text-center mb-16 opacity-0 translate-y-10" data-animate="true">
+        <div className={cn(
+          "text-center mb-16 transition-all duration-1000",
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+        )}>
           <span className="px-3 py-1 rounded-full bg-white/10 text-sm text-white/80 mb-4 inline-block">
             My Expertise
           </span>
@@ -78,7 +80,10 @@ export default function Skills() {
           </p>
         </div>
         
-        <div className="flex flex-wrap justify-center gap-4 mb-12 opacity-0 translate-y-10" data-animate="true" style={{ animationDelay: '0.2s' }}>
+        <div className={cn(
+          "flex flex-wrap justify-center gap-4 mb-12 transition-all duration-1000 delay-200",
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+        )}>
           <button 
             className={cn(
               "px-4 py-2 rounded-full transition-all flex items-center gap-2",
@@ -108,61 +113,51 @@ export default function Skills() {
           ))}
         </div>
         
-        {/* Desktop view - Orbit visualization */}
+        {/* Skills visualization with uploaded image */}
         <div className={cn(
-          "hidden lg:block relative w-full h-[500px] transition-all duration-1000 opacity-0 translate-y-10",
-          isVisible ? "animate-fade-in" : ""
-        )} data-animate="true" style={{ animationDelay: '0.4s' }}>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full cosmic-gradient flex items-center justify-center z-10">
-            <span className="text-white font-semibold">Skills</span>
+          "relative w-full h-[600px] transition-all duration-1000 delay-400",
+          isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
+        )}>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <img 
+              src="/lovable-uploads/e050f112-27fa-46c0-8fe0-76bcb461f28b.png"
+              alt="Skills constellation"
+              className={cn(
+                "w-full max-w-4xl h-auto transition-all duration-2000",
+                isVisible ? "animate-pulse" : ""
+              )}
+              style={{
+                filter: 'drop-shadow(0 0 20px rgba(168, 85, 247, 0.5))',
+                animation: isVisible ? 'floating 6s ease-in-out infinite' : 'none'
+              }}
+            />
           </div>
           
-          {filteredSkills.map((skill, index) => {
-            const angle = (index * (360 / filteredSkills.length)) * (Math.PI / 180);
-            const radius = 200;
-            
-            const x = Math.cos(angle) * radius;
-            const y = Math.sin(angle) * radius;
-            
-            return (
-              <div 
-                key={skill.id}
-                className="absolute flex items-center justify-center glass-card p-3 rounded-full transform -translate-x-1/2 -translate-y-1/2 hover:scale-110 transition-transform cursor-pointer opacity-0"
-                style={{
-                  top: `calc(50% + ${y}px)`,
-                  left: `calc(50% + ${x}px)`,
-                  background: `linear-gradient(45deg, ${skill.color}33, ${skill.color}22)`,
-                  border: `1px solid ${skill.color}55`,
-                  animation: `orbit ${15 + Math.random() * 5}s linear infinite${index % 2 === 0 ? '' : ' reverse'}, fade-in 0.5s forwards`,
-                  animationDelay: `-${index}s, ${0.6 + index * 0.1}s`
-                }}
-                data-animate="true"
-              >
-                <div className="text-center">
-                  <p className="text-white font-medium whitespace-nowrap">{skill.name}</p>
-                  <div className="mt-1 w-full bg-white/20 rounded-full h-1">
-                    <div 
-                      className="h-1 rounded-full transition-all duration-1000" 
-                      style={{ 
-                        width: isVisible ? `${skill.level}%` : '0%', 
-                        backgroundColor: skill.color 
-                      }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          {/* Floating particles around the image */}
+          {isVisible && [...Array(15)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 rounded-full bg-cosmic-comet-blue opacity-60"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                animation: `twinkle ${Math.random() * 3 + 2}s ease-in-out infinite alternate`,
+                animationDelay: `${Math.random() * 5}s`
+              }}
+            />
+          ))}
         </div>
         
-        {/* Mobile view - Skill bars */}
-        <div className="lg:hidden space-y-6">
+        {/* Mobile view - Simplified skill list */}
+        <div className="lg:hidden mt-12 space-y-6">
           {filteredSkills.map((skill, index) => (
             <div 
               key={skill.id} 
-              className="glass-card p-4 opacity-0 translate-y-10"
-              data-animate="true"
-              style={{ animationDelay: `${0.4 + index * 0.1}s` }}
+              className={cn(
+                "glass-card p-4 transition-all duration-500",
+                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+              )}
+              style={{ transitionDelay: `${0.6 + index * 0.1}s` }}
             >
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-white font-medium">{skill.name}</h3>
@@ -181,21 +176,6 @@ export default function Skills() {
           ))}
         </div>
       </div>
-      
-      {/* Floating stars */}
-      {[...Array(20)].map((_, i) => (
-        <div
-          key={i}
-          className="absolute w-1 h-1 rounded-full bg-white"
-          style={{
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            opacity: Math.random() * 0.5 + 0.1,
-            animation: `twinkle ${Math.random() * 3 + 2}s ease-in-out infinite alternate`,
-            animationDelay: `${Math.random() * 5}s`
-          }}
-        />
-      ))}
     </section>
   );
 }
