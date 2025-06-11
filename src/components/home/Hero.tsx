@@ -11,12 +11,12 @@ export default function Hero() {
   const [typingSpeed, setTypingSpeed] = useState(100);
   
   const welcomeTexts = [
-    "Welcome to my cosmic realm",
-    "Exploring digital frontiers",
-    "Crafting digital experiences",
-    "Building the future with code"
+    "Welcome to my cosmic realm where innovation meets creativity",
+    "Exploring digital frontiers with cutting-edge technology and design",
+    "Crafting exceptional digital experiences that inspire and engage users",
+    "Building the future with code, passion, and endless possibilities"
   ];
-  const fullName = "John Doe";
+  const fullName = "Ahmed Hassan";
   const nameTypingSpeed = 150;
   const textRef = useRef<HTMLHeadingElement>(null);
   
@@ -94,10 +94,13 @@ export default function Hero() {
               <span className="text-gradient">{nameText}</span>
               {nameText.length < fullName.length && <span className="animate-pulse">|</span>}
             </h2>
-            <h1 ref={textRef} className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2 h-16">
-              {displayText}
-              <span className="animate-pulse ml-1">|</span>
-            </h1>
+            {/* Fixed height container for typing text to prevent layout shift */}
+            <div className="h-20 md:h-24 lg:h-28 flex items-start">
+              <h1 ref={textRef} className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+                {displayText}
+                <span className="animate-pulse ml-1 text-cosmic-nebula-pink">|</span>
+              </h1>
+            </div>
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-gradient mt-2">
               Full-stack developer & UI/UX enthusiast
             </h2>
