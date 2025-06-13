@@ -1,10 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronDown, Rocket, Star, Sparkles } from 'lucide-react';
 import GlowingButton from '@/components/ui/GlowingButton';
 import StarBackground from '@/components/ui/StarBackground';
-
 export default function Home() {
   const [displayText, setDisplayText] = useState("");
   const [nameText, setNameText] = useState("");
@@ -12,23 +10,14 @@ export default function Home() {
   const [loopNum, setLoopNum] = useState(0);
   const [typingSpeed, setTypingSpeed] = useState(100);
   const navigate = useNavigate();
-  
-  const welcomeTexts = [
-    "Welcome to my cosmic realm of innovation",
-    "Exploring digital frontiers with creativity",
-    "Crafting exceptional digital experiences",
-    "Building the future with endless possibilities"
-  ];
+  const welcomeTexts = ["Welcome to my cosmic realm of innovation", "Exploring digital frontiers with creativity", "Crafting exceptional digital experiences", "Building the future with endless possibilities"];
   const fullName = "Ahmed Hassan";
   const nameTypingSpeed = 150;
-  
   useEffect(() => {
     let timer: NodeJS.Timeout;
-    
     const handleTyping = () => {
       const i = loopNum % welcomeTexts.length;
       const fullText = welcomeTexts[i];
-      
       if (!isDeleting && displayText === fullText) {
         timer = setTimeout(() => {
           setIsDeleting(true);
@@ -39,37 +28,32 @@ export default function Home() {
         setTypingSpeed(100);
         setLoopNum(loopNum + 1);
       } else {
-        setDisplayText(
-          isDeleting
-            ? fullText.substring(0, displayText.length - 1)
-            : fullText.substring(0, displayText.length + 1)
-        );
+        setDisplayText(isDeleting ? fullText.substring(0, displayText.length - 1) : fullText.substring(0, displayText.length + 1));
       }
     };
-    
     timer = setTimeout(handleTyping, typingSpeed);
     return () => clearTimeout(timer);
   }, [displayText, isDeleting, loopNum, typingSpeed, welcomeTexts]);
-  
   useEffect(() => {
     if (nameText.length < fullName.length) {
       const nameTimer = setTimeout(() => {
         setNameText(fullName.substring(0, nameText.length + 1));
       }, nameTypingSpeed);
-      
       return () => clearTimeout(nameTimer);
     }
   }, [nameText]);
-  
-  return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-cosmic-background">
+  return <div className="relative min-h-screen w-full overflow-hidden bg-cosmic-background">
       <StarBackground />
       
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 left-1/5 w-80 h-80 rounded-full bg-cosmic-nebula-blue/20 blur-3xl animate-float"></div>
-        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 rounded-full bg-cosmic-nebula-pink/15 blur-3xl animate-float" style={{ animationDelay: "2s" }}></div>
-        <div className="absolute top-1/2 left-1/2 w-64 h-64 rounded-full bg-cosmic-planet-teal/10 blur-3xl animate-float" style={{ animationDelay: "4s" }}></div>
+        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 rounded-full bg-cosmic-nebula-pink/15 blur-3xl animate-float" style={{
+        animationDelay: "2s"
+      }}></div>
+        <div className="absolute top-1/2 left-1/2 w-64 h-64 rounded-full bg-cosmic-planet-teal/10 blur-3xl animate-float" style={{
+        animationDelay: "4s"
+      }}></div>
       </div>
       
       {/* Main content */}
@@ -106,33 +90,31 @@ export default function Home() {
                   </div>
                 </div>
                 
-                <p className="text-white/80 text-lg md:text-xl max-w-2xl leading-relaxed animate-fade-in" style={{ animationDelay: "0.5s" }}>
+                <p className="text-white/80 text-lg md:text-xl max-w-2xl leading-relaxed animate-fade-in" style={{
+                animationDelay: "0.5s"
+              }}>
                   Passionate technologist crafting elegant solutions to complex problems. 
                   I blend modern web technologies with stunning design to create immersive 
                   digital experiences that inspire and engage.
                 </p>
                 
-                <div className="flex flex-wrap gap-6 animate-fade-in" style={{ animationDelay: "1s" }}>
-                  <GlowingButton 
-                    variant="primary" 
-                    onClick={() => navigate('/projects')}
-                    className="transform hover:scale-105 transition-all duration-300"
-                  >
+                <div className="flex flex-wrap gap-6 animate-fade-in" style={{
+                animationDelay: "1s"
+              }}>
+                  <GlowingButton variant="primary" onClick={() => navigate('/projects')} className="transform hover:scale-105 transition-all duration-300">
                     <Rocket size={18} className="mr-2" />
                     Explore My Work
                   </GlowingButton>
-                  <GlowingButton 
-                    variant="outline" 
-                    onClick={() => navigate('/contact')}
-                    className="transform hover:scale-105 transition-all duration-300"
-                  >
+                  <GlowingButton variant="outline" onClick={() => navigate('/contact')} className="transform hover:scale-105 transition-all duration-300">
                     Contact Me
                   </GlowingButton>
                 </div>
               </div>
               
               {/* Right Content - Enhanced Cosmic Animation */}
-              <div className="flex items-center justify-center relative animate-fade-in" style={{ animationDelay: "0.3s" }}>
+              <div className="flex items-center justify-center relative animate-fade-in" style={{
+              animationDelay: "0.3s"
+            }}>
                 <div className="relative w-96 h-96 lg:w-[500px] lg:h-[500px]">
                   {/* Outer ring */}
                   <div className="absolute inset-0 rounded-full border-2 border-cosmic-nebula-blue/30 animate-spin-slow"></div>
@@ -149,35 +131,23 @@ export default function Home() {
                       
                       {/* Orbiting elements */}
                       <div className="absolute inset-0">
-                        {[...Array(6)].map((_, i) => (
-                          <div
-                            key={i}
-                            className="absolute w-4 h-4 rounded-full shadow-glow"
-                            style={{
-                              background: `linear-gradient(45deg, ${['#7A6AEE', '#B855E8', '#4FD1C7', '#60A5FA', '#F59E0B', '#EC4899'][i]}, ${['#B855E8', '#4FD1C7', '#60A5FA', '#F59E0B', '#EC4899', '#7A6AEE'][i]})`,
-                              animation: `orbit ${15 + i * 2}s linear infinite${i % 2 === 0 ? '' : ' reverse'}`,
-                              animationDelay: `-${i * 2}s`,
-                              transformOrigin: '200px 200px'
-                            }}
-                          />
-                        ))}
+                        {[...Array(6)].map((_, i) => <div key={i} className="absolute w-4 h-4 rounded-full shadow-glow" style={{
+                        background: `linear-gradient(45deg, ${['#7A6AEE', '#B855E8', '#4FD1C7', '#60A5FA', '#F59E0B', '#EC4899'][i]}, ${['#B855E8', '#4FD1C7', '#60A5FA', '#F59E0B', '#EC4899', '#7A6AEE'][i]})`,
+                        animation: `orbit ${15 + i * 2}s linear infinite${i % 2 === 0 ? '' : ' reverse'}`,
+                        animationDelay: `-${i * 2}s`,
+                        transformOrigin: '200px 200px'
+                      }} />)}
                       </div>
                     </div>
                   </div>
                   
                   {/* Floating particles */}
-                  {[...Array(12)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="absolute w-2 h-2 rounded-full bg-white/60 animate-float"
-                      style={{
-                        top: `${Math.random() * 100}%`,
-                        left: `${Math.random() * 100}%`,
-                        animationDelay: `${Math.random() * 5}s`,
-                        animationDuration: `${3 + Math.random() * 4}s`
-                      }}
-                    />
-                  ))}
+                  {[...Array(12)].map((_, i) => <div key={i} className="absolute w-2 h-2 rounded-full bg-white/60 animate-float" style={{
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 5}s`,
+                  animationDuration: `${3 + Math.random() * 4}s`
+                }} />)}
                 </div>
               </div>
             </div>
@@ -185,21 +155,17 @@ export default function Home() {
         </section>
         
         {/* Bottom Navigation Hint */}
-        <div className="flex flex-col items-center pb-12 space-y-4 animate-fade-in" style={{ animationDelay: "1.5s" }}>
+        <div className="flex flex-col items-center pb-12 space-y-4 animate-fade-in" style={{
+        animationDelay: "1.5s"
+      }}>
           <p className="text-white/60 text-sm">Discover more about my journey</p>
           <div className="flex items-center space-x-4">
-            <button 
-              onClick={() => navigate('/about')}
-              className="flex items-center space-x-2 text-white/70 hover:text-white transition-all duration-300 hover:scale-105"
-            >
+            <button onClick={() => navigate('/about')} className="flex items-center space-x-2 text-white/70 hover:text-white transition-all duration-300 hover:scale-105">
               <Star size={16} />
               <span>About Me</span>
             </button>
-            <ChevronDown className="text-white/50 animate-bounce" size={20} />
-            <button 
-              onClick={() => navigate('/skills')}
-              className="flex items-center space-x-2 text-white/70 hover:text-white transition-all duration-300 hover:scale-105"
-            >
+            
+            <button onClick={() => navigate('/skills')} className="flex items-center space-x-2 text-white/70 hover:text-white transition-all duration-300 hover:scale-105">
               <span>My Skills</span>
               <Star size={16} />
             </button>
@@ -208,21 +174,14 @@ export default function Home() {
       </div>
       
       {/* Enhanced floating stars */}
-      {[...Array(50)].map((_, i) => (
-        <div
-          key={i}
-          className="absolute rounded-full bg-white pointer-events-none"
-          style={{
-            width: `${Math.random() * 3 + 1}px`,
-            height: `${Math.random() * 3 + 1}px`,
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            opacity: Math.random() * 0.8 + 0.2,
-            animation: `twinkle ${Math.random() * 4 + 2}s ease-in-out infinite alternate`,
-            animationDelay: `${Math.random() * 6}s`
-          }}
-        />
-      ))}
-    </div>
-  );
+      {[...Array(50)].map((_, i) => <div key={i} className="absolute rounded-full bg-white pointer-events-none" style={{
+      width: `${Math.random() * 3 + 1}px`,
+      height: `${Math.random() * 3 + 1}px`,
+      top: `${Math.random() * 100}%`,
+      left: `${Math.random() * 100}%`,
+      opacity: Math.random() * 0.8 + 0.2,
+      animation: `twinkle ${Math.random() * 4 + 2}s ease-in-out infinite alternate`,
+      animationDelay: `${Math.random() * 6}s`
+    }} />)}
+    </div>;
 }
